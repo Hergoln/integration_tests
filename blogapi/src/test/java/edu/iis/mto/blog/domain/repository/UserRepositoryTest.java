@@ -1,36 +1,29 @@
 package edu.iis.mto.blog.domain.repository;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
-import java.util.List;
-
+import edu.iis.mto.blog.domain.model.AccountStatus;
+import edu.iis.mto.blog.domain.model.User;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import edu.iis.mto.blog.domain.model.AccountStatus;
-import edu.iis.mto.blog.domain.model.User;
+import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class UserRepositoryTest {
 
+    private static String EMPTY_STRING = "";
     @Autowired
     private TestEntityManager entityManager;
-
     @Autowired
     private UserRepository repository;
-
     private User user;
 
     @Before
@@ -66,6 +59,34 @@ public class UserRepositoryTest {
         User persistedUser = repository.save(user);
 
         assertThat(persistedUser.getId(), notNullValue());
+    }
+
+    @Test
+    public void shouldFindUserUsingFirstName() {
+        User persistedUser = entityManager.persist(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(persistedUser.getFirstName(), EMPTY_STRING, EMPTY_STRING);
+
+        assertThat(users, hasSize(1));
+        assertThat(users.get(0).getFirstName(), equalTo(persistedUser.getFirstName()));
+    }
+
+    @Test
+    public void shouldFindUserUsingLastName() {
+        user.setLastName("Jan");
+        User persistedUser = entityManager.persist(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(EMPTY_STRING, persistedUser.getLastName(), EMPTY_STRING);
+
+        assertThat(users, hasSize(1));
+        assertThat(users.get(0).getFirstName(), equalTo(persistedUser.getFirstName()));
+    }
+
+    @Test
+    public void shouldFindUserUsingEmail() {
+        User persistedUser = entityManager.persist(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(EMPTY_STRING, EMPTY_STRING, persistedUser.getEmail());
+
+        assertThat(users, hasSize(1));
+        assertThat(users.get(0).getFirstName(), equalTo(persistedUser.getFirstName()));
     }
 
 }
