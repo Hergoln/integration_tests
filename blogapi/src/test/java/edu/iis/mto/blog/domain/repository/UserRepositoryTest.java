@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -24,19 +25,32 @@ public class UserRepositoryTest {
     private TestEntityManager entityManager;
     @Autowired
     private UserRepository repository;
-    private User user;
+    private List<User> testingUsers = new ArrayList<>();
 
     @Before
     public void setUp() {
-        user = new User();
+        User user = new User();
         user.setFirstName("Jan");
+        user.setLastName("Kowalski");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
+        testingUsers.add(user);
+
+        user = new User();
+        user.setFirstName("Kamil");
+        user.setEmail("kamil@domain.com");
+        user.setAccountStatus(AccountStatus.NEW);
+        testingUsers.add(user);
+
+        user = new User();
+        user.setFirstName("Jakub");
+        user.setEmail("jacob@domain.com");
+        user.setAccountStatus(AccountStatus.NEW);
+        testingUsers.add(user);
     }
 
     @Test
     public void shouldFindNoUsersIfRepositoryIsEmpty() {
-
         List<User> users = repository.findAll();
 
         assertThat(users, hasSize(0));
@@ -44,7 +58,7 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldFindOneUsersIfRepositoryContainsOneUserEntity() {
-        User persistedUser = entityManager.persist(user);
+        User persistedUser = entityManager.persist(testingUsers.get(0));
         List<User> users = repository.findAll();
 
         assertThat(users, hasSize(1));
@@ -55,16 +69,15 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldStoreANewUser() {
-
-        User persistedUser = repository.save(user);
+        User persistedUser = entityManager.persist(testingUsers.get(0));
 
         assertThat(persistedUser.getId(), notNullValue());
     }
 
     @Test
     public void shouldFindUserUsingFirstName() {
-        User persistedUser = entityManager.persist(user);
-        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(persistedUser.getFirstName(), EMPTY_STRING, EMPTY_STRING);
+        User persistedUser = persistMultipleReturnOne();
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(persistedUser.getFirstName(), persistedUser.getFirstName(), persistedUser.getFirstName());
 
         assertThat(users, hasSize(1));
         assertThat(users.get(0).getFirstName(), equalTo(persistedUser.getFirstName()));
@@ -72,9 +85,8 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldFindUserUsingLastName() {
-        user.setLastName("Jan");
-        User persistedUser = entityManager.persist(user);
-        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(EMPTY_STRING, persistedUser.getLastName(), EMPTY_STRING);
+        User persistedUser = persistMultipleReturnOne();
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(persistedUser.getLastName(), persistedUser.getLastName(), persistedUser.getLastName());
 
         assertThat(users, hasSize(1));
         assertThat(users.get(0).getFirstName(), equalTo(persistedUser.getFirstName()));
@@ -82,11 +94,37 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldFindUserUsingEmail() {
-        User persistedUser = entityManager.persist(user);
-        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(EMPTY_STRING, EMPTY_STRING, persistedUser.getEmail());
+        User persistedUser = persistMultipleReturnOne();
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(persistedUser.getEmail(), persistedUser.getEmail(), persistedUser.getEmail());
 
         assertThat(users, hasSize(1));
         assertThat(users.get(0).getFirstName(), equalTo(persistedUser.getFirstName()));
     }
 
+    @Test
+    public void shouldNotFindUserByNotExistingInRepositoryFirstName() {
+        User persistedUser = persistMultipleReturnOne();
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("wrong first name", "wrong last name", "wrong email address");
+        assertThat(users, hasSize(0));
+    }
+
+    @Test
+    public void shouldNotFindUserByNotExistingInRepositoryLastName() {
+        User persistedUser = persistMultipleReturnOne();
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("wrong first name", "wrong last name", "wrong email address");
+        assertThat(users, hasSize(0));
+    }
+
+    @Test
+    public void shouldNotFindUserByNotExistingInRepositoryEmail() {
+        User persistedUser = persistMultipleReturnOne();
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("wrong first name", "wrong last name", "wrong email address");
+        assertThat(users, hasSize(0));
+    }
+
+    private User persistMultipleReturnOne() {
+        entityManager.persist(testingUsers.get(2));
+        entityManager.persist(testingUsers.get(1));
+        return entityManager.persist(testingUsers.get(0));
+    }
 }
