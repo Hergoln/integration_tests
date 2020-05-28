@@ -20,7 +20,10 @@ import static org.junit.Assert.assertThat;
 @DataJpaTest
 public class UserRepositoryTest {
 
-    private static String EMPTY_STRING = "";
+    private static String WRONG_FIRST_NAME = "wrong first name";
+    private static String WRONG_LAST_NAME = "wrong first name";
+    private static String WRONG_EMAIL = "wrong first name";
+
     @Autowired
     private TestEntityManager entityManager;
     @Autowired
@@ -38,12 +41,14 @@ public class UserRepositoryTest {
 
         user = new User();
         user.setFirstName("Kamil");
+        user.setLastName("Komornik");
         user.setEmail("kamil@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
         testingUsers.add(user);
 
         user = new User();
         user.setFirstName("Jakub");
+        user.setLastName("Lewak");
         user.setEmail("jacob@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
         testingUsers.add(user);
@@ -77,7 +82,7 @@ public class UserRepositoryTest {
     @Test
     public void shouldFindUserUsingFirstName() {
         User persistedUser = persistMultipleReturnOne();
-        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(persistedUser.getFirstName(), persistedUser.getFirstName(), persistedUser.getFirstName());
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(persistedUser.getFirstName(), WRONG_LAST_NAME, WRONG_EMAIL);
 
         assertThat(users, hasSize(1));
         assertThat(users.get(0).getFirstName(), equalTo(persistedUser.getFirstName()));
@@ -86,39 +91,25 @@ public class UserRepositoryTest {
     @Test
     public void shouldFindUserUsingLastName() {
         User persistedUser = persistMultipleReturnOne();
-        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(persistedUser.getLastName(), persistedUser.getLastName(), persistedUser.getLastName());
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(WRONG_FIRST_NAME, persistedUser.getLastName(), WRONG_EMAIL);
 
         assertThat(users, hasSize(1));
-        assertThat(users.get(0).getFirstName(), equalTo(persistedUser.getFirstName()));
+        assertThat(users.get(0).getLastName(), equalTo(persistedUser.getLastName()));
     }
 
     @Test
     public void shouldFindUserUsingEmail() {
         User persistedUser = persistMultipleReturnOne();
-        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(persistedUser.getEmail(), persistedUser.getEmail(), persistedUser.getEmail());
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(WRONG_FIRST_NAME, WRONG_LAST_NAME, persistedUser.getEmail());
 
         assertThat(users, hasSize(1));
-        assertThat(users.get(0).getFirstName(), equalTo(persistedUser.getFirstName()));
+        assertThat(users.get(0).getEmail(), equalTo(persistedUser.getEmail()));
     }
 
     @Test
-    public void shouldNotFindUserByNotExistingInRepositoryFirstName() {
+    public void shouldNotFindAnyUserWithAllIncorrectQueries() {
         User persistedUser = persistMultipleReturnOne();
-        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("wrong first name", "wrong last name", "wrong email address");
-        assertThat(users, hasSize(0));
-    }
-
-    @Test
-    public void shouldNotFindUserByNotExistingInRepositoryLastName() {
-        User persistedUser = persistMultipleReturnOne();
-        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("wrong first name", "wrong last name", "wrong email address");
-        assertThat(users, hasSize(0));
-    }
-
-    @Test
-    public void shouldNotFindUserByNotExistingInRepositoryEmail() {
-        User persistedUser = persistMultipleReturnOne();
-        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("wrong first name", "wrong last name", "wrong email address");
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(WRONG_FIRST_NAME, WRONG_LAST_NAME, WRONG_EMAIL);
         assertThat(users, hasSize(0));
     }
 
