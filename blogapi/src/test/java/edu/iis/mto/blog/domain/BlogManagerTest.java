@@ -73,11 +73,11 @@ public class BlogManagerTest {
         when(userRepository.findById(poster.getId())).thenReturn(Optional.of(poster));
 
         User liker = new User();
-        poster.setFirstName("Grazyna");
-        poster.setLastName("Grazyna");
-        poster.setEmail("grazyna@janusz.pl");
-        poster.setId(2L);
-        poster.setAccountStatus(AccountStatus.NEW);
+        liker.setFirstName("Grazyna");
+        liker.setLastName("Grazyna");
+        liker.setEmail("grazyna@janusz.pl");
+        liker.setId(2L);
+        liker.setAccountStatus(AccountStatus.NEW);
         when(userRepository.findById(liker.getId())).thenReturn(Optional.of(liker));
 
         BlogPost post = new BlogPost();
@@ -95,14 +95,15 @@ public class BlogManagerTest {
         poster.setLastName("Janusz");
         poster.setEmail("janusz@grazyna.pl");
         poster.setId(1L);
+        poster.setAccountStatus(AccountStatus.CONFIRMED);
         when(userRepository.findById(poster.getId())).thenReturn(Optional.of(poster));
 
         User liker = new User();
-        poster.setFirstName("Grazyna");
-        poster.setLastName("Grazyna");
-        poster.setEmail("grazyna@janusz.pl");
-        poster.setId(2L);
-        poster.setAccountStatus(AccountStatus.CONFIRMED);
+        liker.setFirstName("Grazyna");
+        liker.setLastName("Grazyna");
+        liker.setEmail("grazyna@janusz.pl");
+        liker.setId(2L);
+        liker.setAccountStatus(AccountStatus.CONFIRMED);
         when(userRepository.findById(liker.getId())).thenReturn(Optional.of(liker));
 
         BlogPost post = new BlogPost();
