@@ -128,7 +128,7 @@ public class LikePostRepositoryTest {
 
         List<LikePost> all = repository.findAll();
 
-        for (LikePost post: all) {
+        for (LikePost post : all) {
             System.out.print(post.getUser().getFirstName());
             System.out.println(post.getPost().getEntry());
         }
