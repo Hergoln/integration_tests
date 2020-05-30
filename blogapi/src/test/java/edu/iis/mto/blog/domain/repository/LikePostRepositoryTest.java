@@ -28,7 +28,7 @@ public class LikePostRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
     @Autowired
-    private LikePostRepository repository;
+    private LikePostRepository likeRepository;
     private User poster;
     private User liker;
 
@@ -75,14 +75,14 @@ public class LikePostRepositoryTest {
 
     @Test
     public void shouldFindNoUsersIfRepositoryIsEmpty() {
-        List<LikePost> likePosts = repository.findAll();
+        List<LikePost> likePosts = likeRepository.findAll();
         assertThat(likePosts, hasSize(0));
     }
 
     @Test
     public void shouldFindOneLikePost() {
         LikePost persistedLike = entityManager.persist(posterLike);
-        List<LikePost> likePosts = repository.findAll();
+        List<LikePost> likePosts = likeRepository.findAll();
 
         assertThat(persistedLike, notNullValue());
     }
@@ -91,24 +91,24 @@ public class LikePostRepositoryTest {
     public void shouldFindLikePostByUserPostingAndBlogPost() {
         entityManager.persist(likerLike);
         entityManager.persist(posterLike);
-        Optional<LikePost> foundPost = repository.findByUserAndPost(likerLike.getUser(), likerLike.getPost());
+        Optional<LikePost> foundPost = likeRepository.findByUserAndPost(likerLike.getUser(), likerLike.getPost());
         assertTrue(foundPost.isPresent());
 
-        foundPost = repository.findByUserAndPost(posterLike.getUser(), posterLike.getPost());
+        foundPost = likeRepository.findByUserAndPost(posterLike.getUser(), posterLike.getPost());
         assertTrue(foundPost.isPresent());
     }
 
     @Test
     public void shouldReturnEmptyWhenLikePostIsAssociatedWithWrongUser() {
         entityManager.persist(likerLike);
-        Optional<LikePost> foundPost = repository.findByUserAndPost(posterLike.getUser(), likerLike.getPost());
+        Optional<LikePost> foundPost = likeRepository.findByUserAndPost(posterLike.getUser(), likerLike.getPost());
         assertFalse(foundPost.isPresent());
     }
 
     @Test
     public void shouldReturnEmptyWhenBlogPostIsAssociatedWithWrongBlogPost() {
         entityManager.persist(likerLike);
-        Optional<LikePost> foundPost = repository.findByUserAndPost(likerLike.getUser(), posterLike.getPost());
+        Optional<LikePost> foundPost = likeRepository.findByUserAndPost(likerLike.getUser(), posterLike.getPost());
         assertFalse(foundPost.isPresent());
     }
 
@@ -126,14 +126,14 @@ public class LikePostRepositoryTest {
         likerLike.setUser(newUser);
         entityManager.persist(likerLike);
 
-        List<LikePost> all = repository.findAll();
+        List<LikePost> all = likeRepository.findAll();
 
         for (LikePost post : all) {
             System.out.print(post.getUser().getFirstName());
             System.out.println(post.getPost().getEntry());
         }
 
-        Optional<LikePost> foundPost = repository.findByUserAndPost(likerLike.getUser(), likerLike.getPost());
+        Optional<LikePost> foundPost = likeRepository.findByUserAndPost(likerLike.getUser(), likerLike.getPost());
         assertTrue(foundPost.isPresent());
     }
 
@@ -149,7 +149,7 @@ public class LikePostRepositoryTest {
         likerLike.setPost(newPost);
         entityManager.persist(likerLike);
 
-        Optional<LikePost> foundPost = repository.findByUserAndPost(likerLike.getUser(), likerLike.getPost());
+        Optional<LikePost> foundPost = likeRepository.findByUserAndPost(likerLike.getUser(), likerLike.getPost());
         assertTrue(foundPost.isPresent());
     }
 }
