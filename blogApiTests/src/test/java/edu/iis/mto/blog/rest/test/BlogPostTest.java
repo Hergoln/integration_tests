@@ -10,11 +10,10 @@ import static io.restassured.RestAssured.given;
 public class BlogPostTest extends FunctionalTests {
 
     private static final String USER_API = "/blog/user";
-    private static final String BASE = "/blog";
 
-    private static final Long[] CONFIRMED_USERS = {1L, 2L, 3L};
-    private static final Long[] NEW_USERS = {4L, 5L, 6L};
-    private static final Long[] REMOVED_USERS = {7L, 8L, 9L};
+    private static final Long CONFIRMED_USER = 1L;
+    private static final Long NEW_USER = 4L;
+    private static final Long REMOVED_USER = 7L;
 
     @Test
     public void postRequestByUserWithConfirmedStatusShouldReturnCreated() {
@@ -28,7 +27,7 @@ public class BlogPostTest extends FunctionalTests {
                 .all()
                 .statusCode(HttpStatus.SC_CREATED)
                 .when()
-                .post(String.format("%s/%d/post", USER_API, CONFIRMED_USERS[0]));
+                .post(String.format("%s/%d/post", USER_API, CONFIRMED_USER));
     }
 
     @Test
@@ -43,7 +42,7 @@ public class BlogPostTest extends FunctionalTests {
                 .all()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .when()
-                .post(String.format("%s/%d/post", USER_API, NEW_USERS[0]));
+                .post(String.format("%s/%d/post", USER_API, NEW_USER));
     }
 
     @Test
@@ -58,6 +57,6 @@ public class BlogPostTest extends FunctionalTests {
                 .all()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .when()
-                .post(String.format("%s/%d/post", USER_API, REMOVED_USERS[0]));
+                .post(String.format("%s/%d/post", USER_API, REMOVED_USER));
     }
 }
