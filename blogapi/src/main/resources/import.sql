@@ -14,3 +14,6 @@ insert into user (account_status, email, first_name, last_name) values ('NEW', '
 insert into user (account_status, email, first_name, last_name) values ('REMOVED', 'lody@demotywatory.com', 'Lody', 'Coral')
 insert into user (account_status, email, first_name, last_name) values ('REMOVED', 'john@demotywatory.com', 'Johny', 'Wick')
 insert into user (account_status, email, first_name, last_name) values ('REMOVED', 'elon@demotywatory.com', 'Elon', 'Musk')
+
+-- blog posts
+insert into blog_post (user_id, entry) values (1, 'initiated testing post')
