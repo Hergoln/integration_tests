@@ -17,7 +17,9 @@ insert into user (account_status, email, first_name, last_name) values ('REMOVED
 
 -- blog posts
 insert into blog_post (user_id, entry) values (1, 'initiated testing post')
+insert into blog_post (user_id, entry) values (2, 'post for PostFinder likes testing')
 insert into blog_post (user_id, entry) values (7, 'testing post of removed user')
 
 -- likePost
-insert into like_post (user_id, post_id) values (1, 1)
+insert into like_post (user_id, post_id) values (3, 1)
+insert into like_post (user_id, post_id) values (1, 2)

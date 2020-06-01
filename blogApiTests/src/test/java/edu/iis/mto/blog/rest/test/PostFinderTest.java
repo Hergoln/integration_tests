@@ -11,7 +11,7 @@ public class PostFinderTest extends FunctionalTests {
     private static final String USER_API = "/blog/user";
 
     private static final Long REMOVED_USER = 7L;
-    private static final Long POST_ID = 1L;
+    private static final Long POST_ID = 2L;
 
     @Test
     public void searchForPostsMadeByUserWithStatusRemovedShouldReturnNotFound() {

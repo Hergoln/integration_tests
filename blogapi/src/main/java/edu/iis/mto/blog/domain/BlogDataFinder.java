@@ -30,6 +30,7 @@ public class BlogDataFinder extends DomainService implements DataFinder {
     @Override
     public UserData getUserData(Long userId) {
         User user = userRepository.findById(userId)
+                .filter(found -> found.getAccountStatus() != AccountStatus.REMOVED)
                 .orElseThrow(domainError(DomainError.USER_NOT_FOUND));
 
         return mapper.mapToDto(user);
@@ -41,6 +42,7 @@ public class BlogDataFinder extends DomainService implements DataFinder {
                 searchString, searchString);
 
         return users.stream()
+                .filter(user -> user.getAccountStatus() != AccountStatus.REMOVED)
                 .map(mapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -56,7 +58,7 @@ public class BlogDataFinder extends DomainService implements DataFinder {
     public List<PostData> getUserPosts(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(domainError(DomainError.USER_NOT_FOUND));
-        if(user.getAccountStatus() == AccountStatus.REMOVED) {
+        if (user.getAccountStatus() == AccountStatus.REMOVED) {
             throw new DomainError(DomainError.USER_REMOVED);
         }
         List<BlogPost> posts = blogPostRepository.findByUser(user);
