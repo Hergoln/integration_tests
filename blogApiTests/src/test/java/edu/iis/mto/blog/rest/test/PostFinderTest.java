@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
-public class FinderTest extends FunctionalTests {
+public class PostFinderTest extends FunctionalTests {
     private static final String USER_API = "/blog/user";
 
     private static final Long REMOVED_USER = 7L;
